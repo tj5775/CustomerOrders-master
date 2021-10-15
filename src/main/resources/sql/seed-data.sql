@@ -1,0 +1,20 @@
+-- // List of Customers that I want to persist.
+INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(123456, 'Torres', 'Victor', '234 Cesar Chavez', '90495', '434-434-95857')
+INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(234566, 'Diaz', 'Alan', '574 Main st', '85473', '434-434-95857')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(474738, 'Rodriguez', 'Brian', '573 Broadway blvd', '44856', '434-434-95857')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(587543, 'Gnughen', 'Andrew', '432 Hollywood blvd', '97865', '434-434-95857')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(595847, 'Torres', 'Israel', '574 park st', '59483', '434-434-95857')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(858743, 'Smith', 'Liam', '574 sixth st', '68549', '434-434-95857')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(938372, 'Johnson', 'Noah', '723 Third st', '04948', '434-434-95857')
+
+-- List of Products that I want to persist.
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('076374517162','Golden Tools', '2', '16 oz. Golden hammer', 5.34, 100)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('584736389484','Silver Tools', '3', '8 oz. Silver hammer', 3.54, 200)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('058463637475','Brown Tools', '5', '8 oz. Brown hammer', 3.54, 500)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('584636485865','Northern Tools', '1', '16 oz. Northern hammer', 5.34, 600)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('685746485967','Wooden Tools', '3', '24 oz. Wooden hammer', 9.99, 500)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('796857463657','Metal Tools', '7', '24 oz. Metal hammer', 9.99, 700)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('172738472634','Mechanic Tools', '8', '32 oz. Mechanic hammer', 12.64, 500)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('373648586746','Southern Tools', '9', '8 oz. Southern hammer', 3.54, 300)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('182836363532','Stanely Tools', '5', '16 oz. Stanely hammer', 5.34, 200)
+INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('281828349573','Stanely Tools', '6', '32 oz. Stanely hammer', 12.64, 100)
