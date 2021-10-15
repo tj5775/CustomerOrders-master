@@ -74,6 +74,8 @@ public class CustomerOrders {
       EntityManager manager = factory.createEntityManager();
       // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
       CustomerOrders customerOrders = new CustomerOrders(manager);
+      List<String> customerDetails = new ArrayList<>();
+      List<String> productDetails = new ArrayList<>();
 
 
       // Any changes to the database need to be done within a transaction.
@@ -84,14 +86,159 @@ public class CustomerOrders {
 
       tx.begin();
 
-      customerOrders.promptCustomer();
-      customerOrders.getAllProducts();
+      customerOrders.displayAllCustomers();
+      customerOrders.promptCustomer(customerDetails);
+      customerOrders.displayAllProducts();
+      customerOrders.promptProduct(productDetails);
+      System.out.println("customerDetails: " + customerDetails);
+      System.out.println("productDetails: " + productDetails);
 
       // Commit the changes so that the new data persists and is visible to other users.
       tx.commit();
       LOGGER.fine("End of Transaction");
 
    } // End of the main method
+
+   public void promptProduct(List<String> productUPC){
+      Scanner scanner = new Scanner(System.in);
+      List<Products> products =
+              this.entityManager.createNamedQuery("ReturnAllProducts", Products.class).getResultList();
+      if(products.size() > 0) {
+         boolean validUserInput = false;
+         boolean isValidProductNumb = false;
+         int productNumber = -1;
+
+         while (!validUserInput || !isValidProductNumb) {
+            System.out.print("Enter the number of the product: ");
+            String userInput = scanner.nextLine();
+            validUserInput = isInteger(userInput);
+            if(!validUserInput){
+               System.out.println("Invalid input. Please enter an integer.");
+            }
+            else{
+               productNumber = Integer.parseInt(userInput);
+
+               productUPC.add(products.get(productNumber - 1).getUPC());
+               productUPC.add(products.get(productNumber - 1).getMfgr());
+               productUPC.add(products.get(productNumber - 1).getModel());
+               productUPC.add(products.get(productNumber - 1).getProd_name());
+               productUPC.add(String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
+               productUPC.add(String.valueOf(products.get(productNumber - 1).getUnits_in_stock()));
+
+               if(productNumber > 0 && productNumber < products.size() + 1){
+                  System.out.println("PRODUCT #" + productNumber + "\tUPC " +
+                          products.get(productNumber - 1).getUPC() + "\t product name: " +
+                          products.get(productNumber - 1).getProd_name());
+                  isValidProductNumb = true;
+               }
+               else{
+                  System.out.println(productNumber + " is not a valid product number. Try again.");
+                  isValidProductNumb = false;
+               }
+            }
+
+         }
+
+      }
+
+   }
+
+   public void displayAllProducts(){
+      List<Products> allProducts =
+              this.entityManager.createNamedQuery("ReturnAllProducts", Products.class).getResultList();
+      if (allProducts.size() == 0) {
+         // Database has no products
+         System.out.println("There are no customers in the database.");
+
+      } else {
+         // Displays all products
+         System.out.println("List of products:");
+         System.out.println("\tUPC\t\t\t\tMFGR\t\t\t\tMODEL\tPRODUCT NAME\t\t\tUNIT LIST PRICE\t\tUNITS IN STOCK");
+         for(int index = 0; index < allProducts.size(); index++){
+            System.out.println((index + 1) + ".\t" + allProducts.get(index).getUPC() + "\t" +
+                    allProducts.get(index).getMfgr() + "     \t" + allProducts.get(index).getModel() + "    \t" +
+                    allProducts.get(index).getProd_name() + "  \t$" + allProducts.get(index).getUnit_list_price() + " \t\t\t\t" +
+                    allProducts.get(index).getUnits_in_stock() + " units");
+         }
+
+      }
+   }
+
+
+
+   public void promptCustomer (List<String> customerInfo){
+      Scanner scanner = new Scanner(System.in);
+      List<Customers> customers =
+              this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
+      if(customers.size() > 0) {
+         boolean validUserInput = false;
+         boolean isValidCustomerNumb = false;
+         int customerNumber = -1;
+
+         while (!validUserInput || !isValidCustomerNumb) {
+            System.out.print("Enter the number of the customer: ");
+            String userInput = scanner.nextLine();
+            validUserInput = isInteger(userInput);
+            if(!validUserInput){
+               System.out.println("Invalid input. Please enter an integer.");
+            }
+            else{
+               customerNumber = Integer.parseInt(userInput);
+
+               customerInfo.add(String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
+               customerInfo.add(customers.get(customerNumber - 1).getFirst_name());
+               customerInfo.add(customers.get(customerNumber - 1).getLast_name());
+               customerInfo.add(customers.get(customerNumber - 1).getPhone());
+               customerInfo.add(customers.get(customerNumber - 1).getStreet());
+               customerInfo.add(customers.get(customerNumber - 1).getZip());
+
+               if(customerNumber > 0 && customerNumber < customers.size() + 1){
+                  System.out.println("customer: " + customerNumber + ". " +
+                          customers.get(customerNumber - 1).getFirst_name() + " " +
+                          customers.get(customerNumber - 1).getLast_name());
+                  isValidCustomerNumb = true;
+               }
+               else{
+                  System.out.println(customerNumber + " is not a valid customer number. Try again.");
+                  isValidCustomerNumb = false;
+               }
+            }
+
+         }
+
+      }
+   }
+
+   public boolean isInteger(String input){
+      //int number;
+      try{
+         Integer.parseInt(input);
+      }
+      catch (NumberFormatException e){
+         return false;
+      }
+      catch (NullPointerException e) {
+         return false;
+      }
+      return true;
+   }
+
+   public void displayAllCustomers(){
+      List<Customers> allCustomers =
+              this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
+      if (allCustomers.size() == 0) {
+         // Database has no customers
+         System.out.println("There are no customers in the database.");
+      } else {
+         // Displays all customers' first and last names
+         System.out.println("List of customers:");
+         for(int index = 0; index < allCustomers.size(); index++){
+            System.out.println((index + 1) + ". " + allCustomers.get(index).getFirst_name() +
+                    " " + allCustomers.get(index).getLast_name());
+         }
+
+      }
+   }
 
    /**
     * Create and persist a list of objects to the database.
@@ -114,26 +261,6 @@ public class CustomerOrders {
       }
    } // End of createEntity member method
 
-   public void getAllProducts(){
-      List<Products> allProducts =
-              this.entityManager.createNamedQuery("ReturnAllProducts", Products.class).getResultList();
-      if (allProducts.size() == 0) {
-         // Database has no products
-         System.out.println("There are no customers in the database.");
-         //return null;
-      } else {
-         // Displays all products
-         System.out.println("List of products:");
-         System.out.println("\tUPC\t\t\t\tMFGR\t\t\t\tMODEL\tPRODUCT NAME\t\t\tUNIT LIST PRICE\t\tUNITS IN STOCK");
-         for(int index = 0; index < allProducts.size(); index++){
-            System.out.println((index + 1) + ".\t" + allProducts.get(index).getUPC() + "\t" +
-                    allProducts.get(index).getMfgr() + "     \t" + allProducts.get(index).getModel() + "    \t" +
-                    allProducts.get(index).getProd_name() + "  \t$" + allProducts.get(index).getUnit_list_price() + " \t\t\t\t" +
-                    allProducts.get(index).getUnits_in_stock() + " units");
-         }
-         //return allProducts;
-      }
-   }
    /**
     * Think of this as a simple map from a String to an instance of Products that has the
     * same name, as the string that you pass in.  To create a new Cars instance, you need to pass
@@ -155,73 +282,5 @@ public class CustomerOrders {
       }
    }// End of the getStyle method
 
-   public void promptCustomer (){
-      Scanner scanner = new Scanner(System.in);
-      List<Customers> customers = getAllCustomers();
-      if(customers.size() > 0) {
-         boolean validUserInput = false;
-         boolean isValidCustomerNumb = false;
-         int customerNumber = -1;
-
-         while (!validUserInput || !isValidCustomerNumb) {
-            System.out.print("Enter the number of the customer: ");
-            String userInput = scanner.nextLine();
-            validUserInput = isInteger(userInput);
-            if(!validUserInput){
-               System.out.println("Invalid input. Please enter an integer.");
-            }
-            else{
-               customerNumber = Integer.parseInt(userInput);
-               if(customerNumber > 0 && customerNumber < customers.size() + 1){
-                  System.out.println("customer: " + customerNumber + ". " +
-                          customers.get(customerNumber - 1).getFirst_name() + " " +
-                          customers.get(customerNumber - 1).getLast_name());
-                  isValidCustomerNumb = true;
-               }
-               else{
-                  System.out.println(customerNumber + " is not a valid customer number. Try again.");
-                  isValidCustomerNumb = false;
-               }
-            }
-
-         }
-
-      }
-      //System.out.println("Customer's name: " + customerName);
-
-
-   }
-
-
-   public boolean isInteger(String input){
-      //int number;
-      try{
-         Integer.parseInt(input);
-      }
-      catch (NumberFormatException e){
-         return false;
-      }
-      catch (NullPointerException e) {
-         return false;
-      }
-      return true;
-   }
-
-   public List<Customers> getAllCustomers(){
-      List<Customers> allCustomers =
-              this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
-      if (allCustomers.size() == 0) {
-         // Database has no customers
-         System.out.println("There are no customers in the database.");
-         return null;
-      } else {
-         // Displays all customers' first and last names
-         System.out.println("List of customers:");
-         for(int index = 0; index < allCustomers.size(); index++){
-            System.out.println((index + 1) + ". " + allCustomers.get(index).getFirst_name() + " " + allCustomers.get(index).getLast_name());
-         }
-         return allCustomers;
-      }
-   }
 
 } // End of CustomerOrders class
