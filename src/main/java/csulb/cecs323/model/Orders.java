@@ -16,6 +16,13 @@ import java.util.Objects;
  */
 
 @Entity
+@NamedNativeQuery(
+        name = "PlaceOrder",
+        query = "INSERT INTO ORDERS" +
+                "(order_date, sold_by, customer_id) " +
+                "VALUE(timeStamp = ?, seller = ?, custID = ?)",
+        resultClass = Orders.class
+)
 @IdClass(Orders_pk.class)
 /**
 A request by a Customer for a collection of one or more

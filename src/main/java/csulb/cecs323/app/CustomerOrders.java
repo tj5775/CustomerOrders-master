@@ -19,7 +19,12 @@ import csulb.cecs323.model.*;
 import org.eclipse.persistence.jpa.jpql.tools.spi.IQuery;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -90,14 +95,34 @@ public class CustomerOrders {
       customerOrders.promptCustomer(customerDetails);
       customerOrders.displayAllProducts();
       customerOrders.promptProduct(productDetails);
+      customerOrders.placeOrder(customerDetails);
+      List<Orders> order = new ArrayList<>();
+      order.add(customerOrders.placeOrder(customerDetails));
       System.out.println("customerDetails: " + customerDetails);
       System.out.println("productDetails: " + productDetails);
 
+      customerOrders.createEntity(order);
       // Commit the changes so that the new data persists and is visible to other users.
       tx.commit();
       LOGGER.fine("End of Transaction");
 
    } // End of the main method
+
+   public Orders placeOrder(List<String> customerDetails){
+      Date date = new Date();
+      SimpleDateFormat timeDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      LocalDateTime dateTime = LocalDateTime.now();
+      Timestamp timeStamp = new Timestamp(date.getTime());
+      //String strDate = String.valueOf(LocalDate.now());
+      System.out.println("Date: " + timeStamp);
+      String seller = "Al";
+      long custID = 47473732;
+      Customers customer = getCustomer(Long.valueOf(customerDetails.get(0)));
+      System.out.println("Customer order: " + customer);
+      Orders orders = new Orders(customer, dateTime, seller);
+
+      return orders;
+   }
 
    public void promptProduct(List<String> productUPC){
       Scanner scanner = new Scanner(System.in);
@@ -126,9 +151,10 @@ public class CustomerOrders {
                productUPC.add(String.valueOf(products.get(productNumber - 1).getUnits_in_stock()));
 
                if(productNumber > 0 && productNumber < products.size() + 1){
-                  System.out.println("PRODUCT #" + productNumber + "\tUPC " +
-                          products.get(productNumber - 1).getUPC() + "\t product name: " +
-                          products.get(productNumber - 1).getProd_name());
+                  System.out.println("PRODUCT #" + productNumber + "\tMFGR: \t\t\t  " + products.get(productNumber - 1).getMfgr());
+                  System.out.println("\t\t\tProduct name: \t  " + products.get(productNumber - 1).getProd_name());
+                  System.out.println("\t\t\tProduct price: \t  $" + products.get(productNumber - 1).getUnit_list_price());
+                  System.out.println("\t\t\tUnits available:  " + products.get(productNumber - 1).getUnits_in_stock());
                   isValidProductNumb = true;
                }
                else{
@@ -238,6 +264,12 @@ public class CustomerOrders {
          }
 
       }
+   }
+
+   public Customers getCustomer(long customer_id){
+      Customers customer = this.entityManager.createNamedQuery("ReturnCustomer", Customers.class)
+              .setParameter(1, customer_id).getSingleResult();
+      return customer;
    }
 
    /**

@@ -21,6 +21,13 @@ import java.util.Objects;
                 " FROM CUSTOMERS ",
         resultClass = Customers.class
 )
+@NamedNativeQuery(
+        name="ReturnCustomer",
+        query = "SELECT  *" +
+                " FROM CUSTOMERS " +
+                "WHERE customer_id = ?",
+        resultClass = Customers.class
+)
 // I could have avoided uniqueConstraints and just done
 // one constraint, but this was more fun.
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames =
