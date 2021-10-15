@@ -124,11 +124,12 @@ public class CustomerOrders {
       } else {
          // Displays all products
          System.out.println("List of products:");
+         System.out.println("\tUPC\t\t\t\tMFGR\t\t\t\tMODEL\tPRODUCT NAME\t\t\tUNIT LIST PRICE\t\tUNITS IN STOCK");
          for(int index = 0; index < allProducts.size(); index++){
             System.out.println((index + 1) + ".\t" + allProducts.get(index).getUPC() + "\t" +
                     allProducts.get(index).getMfgr() + "     \t" + allProducts.get(index).getModel() + "    \t" +
-                    allProducts.get(index).getProd_name() + "   \t" + allProducts.get(index).getUnit_list_price() + " \t" +
-                    allProducts.get(index).getUnits_in_stock());
+                    allProducts.get(index).getProd_name() + "  \t$" + allProducts.get(index).getUnit_list_price() + " \t\t\t\t" +
+                    allProducts.get(index).getUnits_in_stock() + " units");
          }
          //return allProducts;
       }
