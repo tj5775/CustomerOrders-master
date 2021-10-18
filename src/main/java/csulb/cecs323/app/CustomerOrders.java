@@ -82,30 +82,68 @@ public class CustomerOrders {
       //List<String> customerDetails = new ArrayList<>();
      // List<String> productDetails = new ArrayList<>();
       List<String> orderDetails = new ArrayList<>();
+      List<Orders> order = new ArrayList<>();
+      List<Order_lines> order_lines = new ArrayList<>();
+      boolean proceedToComplete = false;
 
 
       // Any changes to the database need to be done within a transaction.
       // See: https://en.wikibooks.org/wiki/Java_Persistence/Transactions
 
-      LOGGER.fine("Begin of Transaction");
-      EntityTransaction tx = manager.getTransaction();
+         LOGGER.fine("Begin of Transaction");
+         EntityTransaction tx = manager.getTransaction();
+         tx.begin();
+         while(!proceedToComplete) {
+         customerOrders.displayAllCustomers(orderDetails);
+         customerOrders.promptCustomer(orderDetails);
+         customerOrders.displayAllProducts(orderDetails);
+         customerOrders.promptProduct(orderDetails);
+         //customerOrders.placeOrder(orderDetails);
 
-      tx.begin();
-      customerOrders.displayAllCustomers(orderDetails);
-      customerOrders.promptCustomer(orderDetails);
-      customerOrders.displayAllProducts(orderDetails);
-      customerOrders.promptProduct(orderDetails);
-      //customerOrders.placeOrder(orderDetails);
-      List<Orders> order = new ArrayList<>();
-      order.add(customerOrders.placeOrder(orderDetails));
+         order.add(customerOrders.placeOrder(orderDetails));
+         proceedToComplete = customerOrders.proceedCheckout(orderDetails);
+         if (!proceedToComplete){
+            System.out.println("Start Again:");
+            orderDetails.clear();
+         }
+         else{
+            order_lines.add(customerOrders.checkout(orderDetails, order));
 
+         }
+      }
 
       customerOrders.createEntity(order);
+      customerOrders.createEntity(order_lines);
       // Commit the changes so that the new data persists and is visible to other users.
       tx.commit();
       LOGGER.fine("End of Transaction");
 
    } // End of the main method
+
+   public Order_lines checkout(List<String> orderDetails, List<Orders> order){
+      Products product = getProduct(orderDetails.get(1));
+      return new Order_lines(order.get(0), product, Integer.parseInt(orderDetails.get(2)), Double.parseDouble(orderDetails.get(3)));
+   }
+
+   public boolean proceedCheckout(List<String> orderDetails){
+      Scanner scanner = new Scanner(System.in);
+      String completeOrder = "";
+      while(!completeOrder.equals("y") && !completeOrder.equals("n")) {
+         System.out.println("Type y/Y to complete order");
+         System.out.println("Or type n/N to abort transaction");
+         completeOrder = scanner.nextLine().toLowerCase();
+         if(!completeOrder.equals("y") && !completeOrder.equals("n")){
+            System.out.println("\n\nInvalid input. Try again.");
+         }
+         //completeOrder = completeOrder.toLowerCase();
+      }
+      if(completeOrder.equals("y")){
+         return true;
+      }
+      else{
+         return false;
+      }
+   }
 
    public void mainMenu(){
       Scanner scanner = new Scanner(System.in);
@@ -169,6 +207,7 @@ public class CustomerOrders {
                if(unitsToOrder > 0 && unitsToOrder <= availableUnits){
                   // Display order details
                   orderDetails.add(String.valueOf(unitsToOrder));
+                  orderDetails.add(String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
                   displayOrderDetails(orderDetails);
                   validUserInput = true;
                }
