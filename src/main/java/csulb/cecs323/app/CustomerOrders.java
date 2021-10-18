@@ -79,8 +79,9 @@ public class CustomerOrders {
       EntityManager manager = factory.createEntityManager();
       // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
       CustomerOrders customerOrders = new CustomerOrders(manager);
-      List<String> customerDetails = new ArrayList<>();
-      List<String> productDetails = new ArrayList<>();
+      //List<String> customerDetails = new ArrayList<>();
+     // List<String> productDetails = new ArrayList<>();
+      List<String> orderDetails = new ArrayList<>();
 
 
       // Any changes to the database need to be done within a transaction.
@@ -90,16 +91,14 @@ public class CustomerOrders {
       EntityTransaction tx = manager.getTransaction();
 
       tx.begin();
-
-      customerOrders.displayAllCustomers();
-      customerOrders.promptCustomer(customerDetails);
-      customerOrders.displayAllProducts();
-      customerOrders.promptProduct(productDetails);
-      customerOrders.placeOrder(customerDetails);
+      customerOrders.displayAllCustomers(orderDetails);
+      customerOrders.promptCustomer(orderDetails);
+      customerOrders.displayAllProducts(orderDetails);
+      customerOrders.promptProduct(orderDetails);
+      //customerOrders.placeOrder(orderDetails);
       List<Orders> order = new ArrayList<>();
-      order.add(customerOrders.placeOrder(customerDetails));
-      System.out.println("customerDetails: " + customerDetails);
-      System.out.println("productDetails: " + productDetails);
+      order.add(customerOrders.placeOrder(orderDetails));
+
 
       customerOrders.createEntity(order);
       // Commit the changes so that the new data persists and is visible to other users.
@@ -108,34 +107,35 @@ public class CustomerOrders {
 
    } // End of the main method
 
-   public Orders placeOrder(List<String> customerDetails){
-      Date date = new Date();
-      SimpleDateFormat timeDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+   public void mainMenu(){
+      Scanner scanner = new Scanner(System.in);
+      System.out.println("1. Select a customer");
+      System.out.println("2. Select a product\n");
+      System.out.println("Please, select an option");
+   }
+
+   public Orders placeOrder(List<String> orderDetails){
       LocalDateTime dateTime = LocalDateTime.now();
-      Timestamp timeStamp = new Timestamp(date.getTime());
-      //String strDate = String.valueOf(LocalDate.now());
-      System.out.println("Date: " + timeStamp);
-      String seller = "Al";
-      long custID = 47473732;
-      Customers customer = getCustomer(Long.valueOf(customerDetails.get(0)));
-      System.out.println("Customer order: " + customer);
-      Orders orders = new Orders(customer, dateTime, seller);
+      Customers customer = getCustomer(Long.valueOf(orderDetails.get(0)));
+      Orders orders = new Orders(customer, dateTime, "Al");
 
       return orders;
    }
 
-   public void promptProduct(List<String> productUPC){
-      Scanner scanner = new Scanner(System.in);
+   public void promptProduct(List<String> orderDetails){
+
       List<Products> products =
               this.entityManager.createNamedQuery("ReturnAllProducts", Products.class).getResultList();
       if(products.size() > 0) {
+         Scanner scanner = new Scanner(System.in);
+         String userInput;
          boolean validUserInput = false;
          boolean isValidProductNumb = false;
          int productNumber = -1;
 
          while (!validUserInput || !isValidProductNumb) {
             System.out.print("Enter the number of the product: ");
-            String userInput = scanner.nextLine();
+            userInput = scanner.nextLine();
             validUserInput = isInteger(userInput);
             if(!validUserInput){
                System.out.println("Invalid input. Please enter an integer.");
@@ -143,18 +143,8 @@ public class CustomerOrders {
             else{
                productNumber = Integer.parseInt(userInput);
 
-               productUPC.add(products.get(productNumber - 1).getUPC());
-               productUPC.add(products.get(productNumber - 1).getMfgr());
-               productUPC.add(products.get(productNumber - 1).getModel());
-               productUPC.add(products.get(productNumber - 1).getProd_name());
-               productUPC.add(String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
-               productUPC.add(String.valueOf(products.get(productNumber - 1).getUnits_in_stock()));
-
                if(productNumber > 0 && productNumber < products.size() + 1){
-                  System.out.println("PRODUCT #" + productNumber + "\tMFGR: \t\t\t  " + products.get(productNumber - 1).getMfgr());
-                  System.out.println("\t\t\tProduct name: \t  " + products.get(productNumber - 1).getProd_name());
-                  System.out.println("\t\t\tProduct price: \t  $" + products.get(productNumber - 1).getUnit_list_price());
-                  System.out.println("\t\t\tUnits available:  " + products.get(productNumber - 1).getUnits_in_stock());
+                  orderDetails.add(products.get(productNumber - 1).getUPC());
                   isValidProductNumb = true;
                }
                else{
@@ -165,11 +155,54 @@ public class CustomerOrders {
 
          }
 
+         validUserInput = false;
+         while(!validUserInput) {
+            System.out.println("PRODUCT #" + productNumber + "\tMFGR: \t\t\t  " + products.get(productNumber - 1).getMfgr());
+            System.out.println("\t\t\tProduct name: \t  " + products.get(productNumber - 1).getProd_name());
+            System.out.println("\t\t\tProduct price: \t  $" + products.get(productNumber - 1).getUnit_list_price());
+            System.out.println("\t\t\tUnits available:  " + products.get(productNumber - 1).getUnits_in_stock());
+            System.out.println("How many units to order?");
+            userInput = scanner.nextLine();
+            if(isInteger(userInput)){
+               int unitsToOrder = Integer.parseInt(userInput);
+               int availableUnits = products.get(productNumber - 1).getUnits_in_stock();
+               if(unitsToOrder > 0 && unitsToOrder <= availableUnits){
+                  // Display order details
+                  orderDetails.add(String.valueOf(unitsToOrder));
+                  displayOrderDetails(orderDetails);
+                  validUserInput = true;
+               }
+               else{
+                  cls();
+                  System.out.println(unitsToOrder + " units exceeds the number of available units");
+                  System.out.println("Please, enter a number of units less than or equal to " + availableUnits);
+               }
+            }
+            else{
+               System.out.println("Invalid input. Please enter an integer.");
+            }
+         }
       }
 
    }
 
-   public void displayAllProducts(){
+   public void displayOrderDetails(List<String> orderDetails){
+      Customers customer = getCustomer(Integer.parseInt(orderDetails.get(0)));
+      Products product = getProduct(orderDetails.get(1));
+      cls();
+      System.out.println("\t\t\t\tOrder Details");
+      System.out.println("Customer info");
+      System.out.println("Customer name: " + customer.getFirst_name() + " " + customer.getLast_name() +
+              "\tPhone number: " + customer.getPhone() + "\t Street: " + customer.getStreet() +
+              "\tZip: " + customer.getZip());
+      System.out.println("\nProduct info");
+      System.out.println("Product name: " + product.getProd_name() + "\tManufacturer: " + product.getMfgr() +
+              "\tUnit price: $" + product.getUnit_list_price() + "\tUnits ordered: " + orderDetails.get(2));
+      System.out.println("Order total: $" + (Integer.parseInt(orderDetails.get(2)) * product.getUnit_list_price()));
+   }
+
+   public void displayAllProducts(List<String> orderDetails){
+      Customers customer = getCustomer(Integer.parseInt(orderDetails.get(0)));
       List<Products> allProducts =
               this.entityManager.createNamedQuery("ReturnAllProducts", Products.class).getResultList();
       if (allProducts.size() == 0) {
@@ -177,8 +210,9 @@ public class CustomerOrders {
          System.out.println("There are no customers in the database.");
 
       } else {
+         cls();
          // Displays all products
-         System.out.println("List of products:");
+         System.out.println("List of products for "+ customer.getFirst_name() + " " + customer.getLast_name() + ":");
          System.out.println("\tUPC\t\t\t\tMFGR\t\t\t\tMODEL\tPRODUCT NAME\t\t\tUNIT LIST PRICE\t\tUNITS IN STOCK");
          for(int index = 0; index < allProducts.size(); index++){
             System.out.println((index + 1) + ".\t" + allProducts.get(index).getUPC() + "\t" +
@@ -192,7 +226,7 @@ public class CustomerOrders {
 
 
 
-   public void promptCustomer (List<String> customerInfo){
+   public void promptCustomer (List<String> orderDetails){
       Scanner scanner = new Scanner(System.in);
       List<Customers> customers =
               this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
@@ -210,18 +244,12 @@ public class CustomerOrders {
             }
             else{
                customerNumber = Integer.parseInt(userInput);
-
-               customerInfo.add(String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
-               customerInfo.add(customers.get(customerNumber - 1).getFirst_name());
-               customerInfo.add(customers.get(customerNumber - 1).getLast_name());
-               customerInfo.add(customers.get(customerNumber - 1).getPhone());
-               customerInfo.add(customers.get(customerNumber - 1).getStreet());
-               customerInfo.add(customers.get(customerNumber - 1).getZip());
-
                if(customerNumber > 0 && customerNumber < customers.size() + 1){
-                  System.out.println("customer: " + customerNumber + ". " +
-                          customers.get(customerNumber - 1).getFirst_name() + " " +
-                          customers.get(customerNumber - 1).getLast_name());
+                  orderDetails.add(String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
+
+//                  System.out.println("Customer selected: " + customerNumber + ". " +
+//                          customers.get(customerNumber - 1).getFirst_name() + " " +
+//                          customers.get(customerNumber - 1).getLast_name());
                   isValidCustomerNumb = true;
                }
                else{
@@ -249,18 +277,23 @@ public class CustomerOrders {
       return true;
    }
 
-   public void displayAllCustomers(){
+   public void displayAllCustomers(List<String> orderDetails){
       List<Customers> allCustomers =
               this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
       if (allCustomers.size() == 0) {
          // Database has no customers
          System.out.println("There are no customers in the database.");
       } else {
+         //cls(); // clears the screen
+
          // Displays all customers' first and last names
          System.out.println("List of customers:");
+         System.out.println("\tNAME\t\t\t\tPHONE\t\t\tSTREET\t\t\t\t\tZIPCODE");
          for(int index = 0; index < allCustomers.size(); index++){
             System.out.println((index + 1) + ". " + allCustomers.get(index).getFirst_name() +
-                    " " + allCustomers.get(index).getLast_name());
+                    " " + allCustomers.get(index).getLast_name() + "\t\t" +
+                    allCustomers.get(index).getPhone() + "\t" + allCustomers.get(index).getStreet() +
+                    " \t\t" + allCustomers.get(index).getZip());
          }
 
       }
@@ -313,6 +346,12 @@ public class CustomerOrders {
          return products.get(0);
       }
    }// End of the getStyle method
+
+   public void cls(){
+      for(int i = 0; i < 20; i ++){
+         System.out.println();
+      }
+   }
 
 
 } // End of CustomerOrders class

@@ -21,7 +21,7 @@ import javax.persistence.NamedNativeQuery;
         name="ReturnProduct",
         query = "SELECT * " +
                 "FROM   PRODUCTS " +
-                "WHERE  url = ? ",
+                "WHERE  UPC = ? ",
         resultClass = Products.class
 )
 @NamedNativeQuery(

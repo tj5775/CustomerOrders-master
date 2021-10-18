@@ -1,11 +1,11 @@
 -- // List of Customers that I want to persist.
-INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(123456, 'Torres', 'Victor', '234 Cesar Chavez', '90495', '434-434-95857')
-INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(234566, 'Diaz', 'Alan', '574 Main st', '85473', '434-434-95857')
-INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(474738, 'Rodriguez', 'Brian', '573 Broadway blvd', '44856', '434-434-95857')
-INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(587543, 'Gnughen', 'Andrew', '432 Hollywood blvd', '97865', '434-434-95857')
-INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(595847, 'Torres', 'Israel', '574 park st', '59483', '434-434-95857')
-INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(858743, 'Smith', 'Liam', '574 sixth st', '68549', '434-434-95857')
-INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(938372, 'Johnson', 'Noah', '723 Third st', '04948', '434-434-95857')
+INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(123456, 'Torres', 'Victor', '234 Cesar Chavez', '90495', '475-203-4958')
+INSERT INTO Customers(customer_id, last_name, first_name, street, zip, phone) VALUES(234566, 'Robinson', 'Alan', '57433 Manhattan st', '85473', '958-475-4658')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(474738, 'Rodriguez', 'Brian', '573 Broadway blvd', '44856', '708-478-4758')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(587543, 'Gnughen', 'Andrew', '432 Hollywood blvd', '97865', '760-485-5867')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(595847, 'Torres', 'Israel', '57 Parkerson st', '59483', '323-484-1029')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(858743, 'Simpson', 'Noemi', '57 sixteenth st', '68549', '909-049-9203')
+INSERT INTO CUSTOMERS(customer_id, last_name, first_name, street, zip, phone) VALUES(938372, 'Johnson', 'James', '73 Thirteenth st', '04948', '404-506-3847')
 
 -- List of Products that I want to persist.
 INSERT INTO PRODUCTS(upc, mfgr, model, prod_name, unit_list_price, units_in_stock) VALUES('076374517162','Golden Tools', '2', '16 oz. Golden hammer', 5.34, 100)
