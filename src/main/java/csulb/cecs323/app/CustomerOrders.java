@@ -72,6 +72,11 @@ public class CustomerOrders {
       this.entityManager = manager;
    }
 
+   /**
+    * Main method. 
+    * Controls the EntityManager and allows the user to make more transactions if they want to.
+    * @param args
+    */
    public static void main(String[] args) {
       LOGGER.fine("Creating EntityManagerFactory and EntityManager");
       EntityManagerFactory factory = Persistence.createEntityManagerFactory("CustomerOrders");
@@ -147,11 +152,25 @@ public class CustomerOrders {
 
    } // End of the main method
 
+   /**
+    * Checkout method. Creates a new Order Line.
+    * 
+    * @param orderDetails     Details associated with the order being checked out.
+    * @param order            All current orders.
+    * @return                 The order line associated with both the order and orderDetails.
+    */
    public Order_lines checkout(List<String> orderDetails, List<Orders> order){
       Products product = getProduct(orderDetails.get(1));
       return new Order_lines(order.get(0), product, Integer.parseInt(orderDetails.get(2)), Double.parseDouble(orderDetails.get(3)));
    }
 
+   /**
+    * Allows customer to choose whether or not they are completing their order.
+    * If so, then they can proceed to checkout.
+    * 
+    * @param orderDetails     Details associated with the order being checked out.
+    * @return boolean         Whether or not the order has been completed. (True = complete, False = incomplete)
+    */
    public boolean proceedCheckout(List<String> orderDetails){
       Scanner scanner = new Scanner(System.in);
       String completeOrder = "";
@@ -173,7 +192,12 @@ public class CustomerOrders {
       }
    }
 
-
+   /**
+    * Method to create an order using specific details.
+    * 
+    * @param orderDetails     Details associated with the order being placed.
+    * @return                 The order being placed using the passed details.    
+    */
    public Orders placeOrder(List<String> orderDetails){
       LocalDateTime dateTime = LocalDateTime.now();
       Customers customer = getCustomer(Long.valueOf(orderDetails.get(0)));
@@ -182,6 +206,11 @@ public class CustomerOrders {
       return orders;
    }
 
+   /**
+    * Method for user to find the specific product(s) they are looking for.
+    * 
+    * @param orderDetails     Details associated with the order being placed.   
+    */
    public void promptProduct(List<String> orderDetails){
 
       List<Products> products =
@@ -250,6 +279,11 @@ public class CustomerOrders {
 
    }
 
+   /**
+    * Method to display all the details of a specific order being placed.
+    * 
+    * @param orderDetails     Details associated with the order being placed.
+    */
    public void displayOrderDetails(List<String> orderDetails){
       Customers customer = getCustomer(Integer.parseInt(orderDetails.get(0)));
       Products product = getProduct(orderDetails.get(1));
@@ -265,6 +299,11 @@ public class CustomerOrders {
       System.out.println("Order total: $" + (Integer.parseInt(orderDetails.get(2)) * product.getUnit_list_price()));
    }
 
+   /**
+    * Method to display all the products.
+    * 
+    * @param orderDetails     Details associated with the order being placed.   
+    */
    public void displayAllProducts(List<String> orderDetails){
       Customers customer = getCustomer(Integer.parseInt(orderDetails.get(0)));
       List<Products> allProducts =
@@ -288,8 +327,11 @@ public class CustomerOrders {
       }
    }
 
-
-
+   /**
+    * Method to get and validate customers.
+    * 
+    * @param orderDetails     Details associated with the order being placed.
+    */
    public void promptCustomer (List<String> orderDetails){
       Scanner scanner = new Scanner(System.in);
       List<Customers> customers =
@@ -324,6 +366,12 @@ public class CustomerOrders {
       }
    }
 
+   /**
+    * Method to check if a certain input is an integer.
+    * 
+    * @param input            The value to be checked for integer status.
+    * @return                 Whether or not the input is an integer. (True = integer, False = non-integer)    
+    */
    public boolean isInteger(String input){
       //int number;
       try{
@@ -338,6 +386,11 @@ public class CustomerOrders {
       return true;
    }
 
+   /**
+    * Method to display a list of all customers.
+    * 
+    * @param orderDetails     Details associated with the order being placed.
+    */
    public void displayAllCustomers(List<String> orderDetails){
       List<Customers> allCustomers =
               this.entityManager.createNamedQuery("ReturnAllNames", Customers.class).getResultList();
@@ -360,6 +413,12 @@ public class CustomerOrders {
       }
    }
 
+   /**
+    * Method to get the details of a specific customer
+    * 
+    * @param customer_id     The ID of the customer whose details are needed.
+    * @return                The customer associated with the ID passed.
+    */
    public Customers getCustomer(long customer_id){
       Customers customer = this.entityManager.createNamedQuery("ReturnCustomer", Customers.class)
               .setParameter(1, customer_id).getSingleResult();
