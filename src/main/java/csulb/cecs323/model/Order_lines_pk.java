@@ -36,23 +36,48 @@ public class Order_lines_pk implements Serializable {
     @Column(nullable = false, length = 30)
     /** One product within this one order */
     private String product;
-
+    /**
+     * A get method for order
+     *
+     * @return          current order
+     */
     public Orders_pk getOrder() {
         return order;
     }
 
+    /**
+     * A set method for order
+     *
+     * @param order
+     */
     public void setOrder(Orders_pk order) {
         this.order = order;
     }
 
+    /**
+     * A get method for unit_sale_price
+     *
+     * @return          current product
+     */
     public String getProduct() {
         return product;
     }
 
+    /**
+     * A set method for product
+     *
+     * @param product
+     */
     public void setProduct(String product) {
         this.product = product;
     }
 
+    /**
+     * A method that compares an object to the Order_lines object and sees whether they are equal or not
+     *
+     * @param o
+     * @return boolean          Whether or not they are equal
+     */
     @Override
     public boolean equals (Object o) {
         boolean results = false;
@@ -67,6 +92,11 @@ public class Order_lines_pk implements Serializable {
         }
         return results;
     }
+    /**
+     * A method that generates a hash code using the order value and the product value
+     *
+     * @return int      the hashcode of all input values
+     */
     @Override
     public int hashCode () {
         return Objects.hash (this.getOrder(), this.getProduct());
