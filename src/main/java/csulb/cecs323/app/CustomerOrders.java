@@ -250,8 +250,8 @@ public class CustomerOrders {
             }
             else{
                productNumber = Integer.parseInt(userInput);
-               System.out.println(sameProduct(productNumbers, productNumber));
-               System.out.println("Product Size: " + this.productNumbers.size());
+               //System.out.println(sameProduct(productNumbers, productNumber));
+               //System.out.println("Product Size: " + this.productNumbers.size());
                if(productNumber > 0 && productNumber < products.size() + 1 && !sameProduct(this.productNumbers, productNumber)){
                   orderDetails.add(1, products.get(productNumber - 1).getUPC());
                   this.productNumbers.add(productNumber);
