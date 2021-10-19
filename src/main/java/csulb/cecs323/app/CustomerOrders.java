@@ -82,12 +82,12 @@ public class CustomerOrders {
       EntityManagerFactory factory = Persistence.createEntityManagerFactory("CustomerOrders");
       EntityManager manager = factory.createEntityManager();
       boolean again = true;
+      List<String> orderDetails = new ArrayList<>();
       while (again) {
          // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
          CustomerOrders customerOrders = new CustomerOrders(manager);
          //List<String> customerDetails = new ArrayList<>();
          // List<String> productDetails = new ArrayList<>();
-         List<String> orderDetails = new ArrayList<>();
          List<Orders> order = new ArrayList<>();
          List<Order_lines> order_lines = new ArrayList<>();
          List<Products> product = new ArrayList<>();
@@ -100,9 +100,10 @@ public class CustomerOrders {
          LOGGER.fine("Begin of Transaction");
          EntityTransaction tx = manager.getTransaction();
          tx.begin();
+         customerOrders.displayAllCustomers(orderDetails);
+         customerOrders.promptCustomer(orderDetails);
          while (!proceedToComplete) {
-            customerOrders.displayAllCustomers(orderDetails);
-            customerOrders.promptCustomer(orderDetails);
+
             customerOrders.displayAllProducts(orderDetails);
             customerOrders.promptProduct(orderDetails);
             //customerOrders.placeOrder(orderDetails);
@@ -112,7 +113,7 @@ public class CustomerOrders {
             proceedToComplete = customerOrders.proceedCheckout(orderDetails);
             if (!proceedToComplete) {
                System.out.println("Welcome back");
-               orderDetails.clear();
+               //orderDetails.clear();
             } else {
                order_lines.add(customerOrders.checkout(orderDetails, order));
 
@@ -143,6 +144,7 @@ public class CustomerOrders {
             else if(userInput.equals("n")){
                again = false;
                loop1 = false;
+               customerOrders.displayAllOrderDetails(orderDetails);
             }
             else{
                System.out.println("Invalid input. Please enter 'y/Y or n/N");
@@ -233,7 +235,7 @@ public class CustomerOrders {
                productNumber = Integer.parseInt(userInput);
 
                if(productNumber > 0 && productNumber < products.size() + 1){
-                  orderDetails.add(products.get(productNumber - 1).getUPC());
+                  orderDetails.add(1, products.get(productNumber - 1).getUPC());
                   isValidProductNumb = true;
                }
                else{
@@ -259,8 +261,8 @@ public class CustomerOrders {
                cls();
                if(unitsToOrder > 0 && unitsToOrder <= availableUnits){
                   // Display order details
-                  orderDetails.add(String.valueOf(unitsToOrder));
-                  orderDetails.add(String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
+                  orderDetails.add(2, String.valueOf(unitsToOrder));
+                  orderDetails.add(3, String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
 
                   displayOrderDetails(orderDetails);
                   validUserInput = true;
@@ -297,6 +299,42 @@ public class CustomerOrders {
       System.out.println("Product name: " + product.getProd_name() + "\tManufacturer: " + product.getMfgr() +
               "\tUnit price: $" + product.getUnit_list_price() + "\tUnits ordered: " + orderDetails.get(2));
       System.out.println("Order total: $" + (Integer.parseInt(orderDetails.get(2)) * product.getUnit_list_price()));
+   }
+
+   public void displayAllOrderDetails(List<String> orderDetails) {
+      Customers customer = getCustomer(Integer.parseInt(orderDetails.get(0)));
+      Products product = new Products();
+      double total = 0;
+      /*
+      System.out.println(orderDetails.size());
+      for (int x = 0; x < orderDetails.size(); x++) {
+         System.out.println(orderDetails.get(x));
+      }
+
+       */
+      for (int x = 0; x < orderDetails.size(); x++) {
+         /*
+         if (x % 3 == 0) {
+            customer = getCustomer(Integer.parseInt(orderDetails.get(x)));
+            }
+         */
+         if (x % 4 == 1) {
+            product = getProduct(orderDetails.get(x));
+         }
+         if (x % 4 == 2) {
+            System.out.println("\t\t\t\tOrder Details");
+            System.out.println("Customer info");
+            System.out.println("Customer name: " + customer.getFirst_name() + " " + customer.getLast_name() +
+                    "\tPhone number: " + customer.getPhone() + "\t Street: " + customer.getStreet() +
+                    "\tZip: " + customer.getZip());
+            System.out.println("\nProduct info");
+            System.out.println("Product name: " + product.getProd_name() + "\tManufacturer: " + product.getMfgr() +
+                    "\tUnit price: $" + product.getUnit_list_price() + "\tUnits ordered: " + orderDetails.get(x));
+            System.out.println("Order total: $" + (Integer.parseInt(orderDetails.get(x)) * product.getUnit_list_price()));
+            total += Integer.parseInt(orderDetails.get(x)) * product.getUnit_list_price();
+         }
+      }
+      System.out.println("\nThe Total Cost: $" + total);
    }
 
    /**
@@ -351,7 +389,7 @@ public class CustomerOrders {
             else{
                customerNumber = Integer.parseInt(userInput);
                if(customerNumber > 0 && customerNumber < customers.size() + 1){
-                  orderDetails.add(String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
+                  orderDetails.add(0, String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
 
                   isValidCustomerNumb = true;
                }

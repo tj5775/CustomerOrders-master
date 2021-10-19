@@ -63,7 +63,7 @@ public class Customers {
 
     /**
      * Constructor for all private variables in Customers
-     * 
+     *
      * @param last_name
      * @param first_name
      * @param street
