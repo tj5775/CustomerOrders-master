@@ -56,7 +56,20 @@ public class Customers {
     /** Their phone number, with no particular validation */
     private String phone;
 
+    /**
+     * Default Constructor
+     */
     public Customers() {}
+
+    /**
+     * Constructor for all private variables in Customers
+     * 
+     * @param last_name
+     * @param first_name
+     * @param street
+     * @param zip
+     * @param phone
+     */
     public Customers (String last_name, String first_name, String street,
                       String zip, String phone) {
         this.last_name = last_name;
