@@ -147,7 +147,7 @@ public class Order_lines {
     }
 
     /**
-     * A method that compares two objects and sees whether they are equal or not
+     * A method that compares an object to the Order_lines object and sees whether they are equal or not
      *
      * @param o
      * @return boolean          Whether or not they are equal
