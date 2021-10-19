@@ -49,8 +49,17 @@ public class Orders {
     /** The name of the sales person who sold the goods. */
     private String sold_by;
 
+   /**
+    * Default constructor for Orders objects.
+    */
     public Orders () {}
 
+    /**
+    * The constructor for the Orders class. Takes in details about the Order for later use in the application.
+    * @param customer       The customer who is placing the order
+    * @param order_date     The date which the order is being placed
+    * @param sold_by        The entity selling the order
+    */
     public Orders (Customers customer, LocalDateTime order_date,
                    String sold_by) {
         this.customer = customer;
@@ -58,36 +67,70 @@ public class Orders {
         this.sold_by = sold_by;
     }
 
+    /**
+    * The getter method for customer objects
+    * @return               The requested customer object
+    */
     public Customers getCustomer() {
         return customer;
     }
 
+    /**
+    * The setter method for customer objects
+    * @param customer       The customer placing the order
+    */
     public void setCustomer(Customers customer) {
         this.customer = customer;
     }
 
+    /**
+    * The getter method for order dates
+    * @return               The requested order date
+    */
     public LocalDateTime getOrder_date() {
         return order_date;
     }
 
+    /**
+    * The setter method for order dates
+    * @param order_date       When the customer is placing the order
+    */
     public void setOrder_date(LocalDateTime order_date) {
         this.order_date = order_date;
     }
 
+    /**
+    * The getter method for sold by info
+    * @return               The entity selling the order
+    */
     public String getSold_by() {
         return sold_by;
     }
 
+    /**
+    * The setter method for order dates
+    * @param sold_by        The entity selling the order
+    */
     public void setSold_by(String sold_by) {
         this.sold_by = sold_by;
     }
 
+    /**
+     * A toString method for Orders displaying the customer, order date, and sold by
+     * @return
+     */
     @Override
     public String toString () {
         return "Order: Placed by: " + this.getCustomer() + ", On: " + this.getOrder_date() +
                 ", Sold by: " + this.getSold_by();
     }
 
+    /**
+     * A method that determines whether an object equals the current Order object
+     *
+     * @param o
+     * @return boolean          returns true or false dependent or whether the object equals the current Order object
+     */
     @Override
     public boolean equals (Object o) {
         Orders order = (Orders) o;
@@ -95,6 +138,10 @@ public class Orders {
                 this.getOrder_date() == order.getOrder_date());
     }
 
+    /**
+     * A method that produces a hashCode of the order date and customer from the Orders object
+     * @return int          hashcode of the 2 private variables in Orders
+     */
     @Override
     public int hashCode () {
         return Objects.hash(this.getOrder_date(), this.getCustomer());
