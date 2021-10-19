@@ -53,8 +53,19 @@ public class Order_lines {
      */
     private double unit_sale_price;
 
+    /**
+     * Default Constructor for Order_lines
+     */
     public Order_lines(){};
 
+    /**
+     * Constructor for all private variables in Order_lines
+     *
+     * @param order
+     * @param product
+     * @param quantity
+     * @param unit_sale_price
+     */
     public Order_lines(Orders order, Products product, int quantity, double unit_sale_price){
         this.order = order;
         this.product = product;
