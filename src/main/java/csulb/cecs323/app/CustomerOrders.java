@@ -47,6 +47,7 @@ import java.util.logging.Logger;
  *
  */
 public class CustomerOrders {
+   private ArrayList<Integer> productNumbers = new ArrayList<Integer>();
    /**
     * You will likely need the entityManager in a great many functions throughout your application.
     * Rather than make this a global variable, we will make it an instance variable within the CustomerOrders
@@ -83,6 +84,7 @@ public class CustomerOrders {
       EntityManager manager = factory.createEntityManager();
       boolean again = true;
       List<String> orderDetails = new ArrayList<>();
+
       while (again) {
          // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
          CustomerOrders customerOrders = new CustomerOrders(manager);
@@ -209,6 +211,21 @@ public class CustomerOrders {
    }
 
    /**
+    * Method that checks if a product is already been ordered by the user
+    */
+   public boolean sameProduct(ArrayList<Integer> i, int productNumber)
+   {
+      for(int y = 0; y < i.size(); y++)
+      {
+         if(i.get(y) == productNumber)
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   /**
     * Method for user to find the specific product(s) they are looking for.
     * 
     * @param orderDetails     Details associated with the order being placed.   
@@ -233,9 +250,11 @@ public class CustomerOrders {
             }
             else{
                productNumber = Integer.parseInt(userInput);
-
-               if(productNumber > 0 && productNumber < products.size() + 1){
+               System.out.println(sameProduct(productNumbers, productNumber));
+               System.out.println("Product Size: " + this.productNumbers.size());
+               if(productNumber > 0 && productNumber < products.size() + 1 && !sameProduct(this.productNumbers, productNumber)){
                   orderDetails.add(1, products.get(productNumber - 1).getUPC());
+                  this.productNumbers.add(productNumber);
                   isValidProductNumb = true;
                }
                else{
