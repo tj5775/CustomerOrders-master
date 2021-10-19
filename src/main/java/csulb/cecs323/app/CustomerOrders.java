@@ -17,7 +17,6 @@ import com.mysql.cj.Session;
 import com.mysql.cj.xdevapi.SessionFactory;
 import csulb.cecs323.model.*;
 import org.eclipse.persistence.jpa.jpql.tools.spi.IQuery;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
