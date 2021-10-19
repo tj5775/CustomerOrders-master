@@ -63,84 +63,38 @@ public class Order_lines {
     }
 
 
-    /**
-     * A get method for order
-     *
-     * @return          current order
-     */
     public Orders getOrder() {
         return order;
     }
 
-    /**
-     * A set method for order
-     *
-     * @param order
-     */
     public void setOrder(Orders order) {
         this.order = order;
     }
 
-    /**
-     * A get method for product
-     *
-     * @return          current product
-     */
     public Products getProduct() {
         return product;
     }
 
-    /**
-     * A set method for product
-     *
-     * @param product
-     */
     public void setProduct(Products product) {
         this.product = product;
     }
 
-    /**
-     * A get method for quantity
-     *
-     * @return          current quantity
-     */
     public int getQuantity() {
         return quantity;
     }
 
-    /**
-     * A set method for quantity
-     *
-     * @param quantity
-     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    /**
-     * A get method for unit_sale_price
-     *
-     * @return          current unit_sale_price
-     */
     public double getUnit_sale_price() {
         return unit_sale_price;
     }
 
-    /**
-     * A set method for unit_sale_price
-     *
-     * @param unit_sale_price
-     */
     public void setUnit_sale_price(double unit_sale_price) {
         this.unit_sale_price = unit_sale_price;
     }
 
-    /**
-     * A method that compares two objects and sees whether they are equal or not
-     *
-     * @param o
-     * @return boolean          Whether or not they are equal
-     */
     public boolean equals (Object o) {
         boolean results = false;
         if (this == o) {
@@ -155,11 +109,6 @@ public class Order_lines {
         return results;
     }
 
-    /**
-     * A method that generates a hash code using the order value and the product value
-     *
-     * @return int      the hashcode of all input values
-     */
     public int hasCode () {
         return Objects.hash(this.getOrder(), this.getProduct());
     }
