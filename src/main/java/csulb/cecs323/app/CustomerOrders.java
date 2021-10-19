@@ -77,46 +77,74 @@ public class CustomerOrders {
       LOGGER.fine("Creating EntityManagerFactory and EntityManager");
       EntityManagerFactory factory = Persistence.createEntityManagerFactory("CustomerOrders");
       EntityManager manager = factory.createEntityManager();
-      // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
-      CustomerOrders customerOrders = new CustomerOrders(manager);
-      //List<String> customerDetails = new ArrayList<>();
-     // List<String> productDetails = new ArrayList<>();
-      List<String> orderDetails = new ArrayList<>();
-      List<Orders> order = new ArrayList<>();
-      List<Order_lines> order_lines = new ArrayList<>();
-      boolean proceedToComplete = false;
+      boolean again = true;
+      while (again) {
+         // Create an instance of CustomerOrders and store our new EntityManager as an instance variable.
+         CustomerOrders customerOrders = new CustomerOrders(manager);
+         //List<String> customerDetails = new ArrayList<>();
+         // List<String> productDetails = new ArrayList<>();
+         List<String> orderDetails = new ArrayList<>();
+         List<Orders> order = new ArrayList<>();
+         List<Order_lines> order_lines = new ArrayList<>();
+         List<Products> product = new ArrayList<>();
+         boolean proceedToComplete = false;
 
 
-      // Any changes to the database need to be done within a transaction.
-      // See: https://en.wikibooks.org/wiki/Java_Persistence/Transactions
+         // Any changes to the database need to be done within a transaction.
+         // See: https://en.wikibooks.org/wiki/Java_Persistence/Transactions
 
          LOGGER.fine("Begin of Transaction");
          EntityTransaction tx = manager.getTransaction();
          tx.begin();
-         while(!proceedToComplete) {
-         customerOrders.displayAllCustomers(orderDetails);
-         customerOrders.promptCustomer(orderDetails);
-         customerOrders.displayAllProducts(orderDetails);
-         customerOrders.promptProduct(orderDetails);
-         //customerOrders.placeOrder(orderDetails);
+         while (!proceedToComplete) {
+            customerOrders.displayAllCustomers(orderDetails);
+            customerOrders.promptCustomer(orderDetails);
+            customerOrders.displayAllProducts(orderDetails);
+            customerOrders.promptProduct(orderDetails);
+            //customerOrders.placeOrder(orderDetails);
 
-         order.add(customerOrders.placeOrder(orderDetails));
-         proceedToComplete = customerOrders.proceedCheckout(orderDetails);
-         if (!proceedToComplete){
-            System.out.println("Start Again:");
-            orderDetails.clear();
+
+            order.add(customerOrders.placeOrder(orderDetails));
+            proceedToComplete = customerOrders.proceedCheckout(orderDetails);
+            if (!proceedToComplete) {
+               System.out.println("Welcome back");
+               orderDetails.clear();
+            } else {
+               order_lines.add(customerOrders.checkout(orderDetails, order));
+
+            }
          }
-         else{
-            order_lines.add(customerOrders.checkout(orderDetails, order));
 
+         customerOrders.createEntity(order);
+         customerOrders.createEntity(order_lines);
+
+         product.add(customerOrders.getProduct(orderDetails.get(1)));
+         int updatedQuantity = product.get(0).getUnits_in_stock() - Integer.parseInt(orderDetails.get(2));
+         product.get(0).setUnits_in_stock(updatedQuantity);
+         customerOrders.createEntity(product);
+         // Commit the changes so that the new data persists and is visible to other users.
+         tx.commit();
+         LOGGER.fine("End of Transaction");
+
+         Scanner scanner = new Scanner(System.in);
+         boolean loop1 = true;
+         while (loop1) {
+            String userInput = " ";
+            System.out.println("Do you want to place another order? y/Y or n/N");
+            userInput = scanner.nextLine().toLowerCase();
+            if (userInput.equals("y")) {
+               again = true;
+               loop1 = false;
+            }
+            else if(userInput.equals("n")){
+               again = false;
+               loop1 = false;
+            }
+            else{
+               System.out.println("Invalid input. Please enter 'y/Y or n/N");
+            }
          }
       }
-
-      customerOrders.createEntity(order);
-      customerOrders.createEntity(order_lines);
-      // Commit the changes so that the new data persists and is visible to other users.
-      tx.commit();
-      LOGGER.fine("End of Transaction");
 
    } // End of the main method
 
@@ -141,16 +169,11 @@ public class CustomerOrders {
          return true;
       }
       else{
+         cls();
          return false;
       }
    }
 
-   public void mainMenu(){
-      Scanner scanner = new Scanner(System.in);
-      System.out.println("1. Select a customer");
-      System.out.println("2. Select a product\n");
-      System.out.println("Please, select an option");
-   }
 
    public Orders placeOrder(List<String> orderDetails){
       LocalDateTime dateTime = LocalDateTime.now();
@@ -195,6 +218,7 @@ public class CustomerOrders {
 
          validUserInput = false;
          while(!validUserInput) {
+            //cls();
             System.out.println("PRODUCT #" + productNumber + "\tMFGR: \t\t\t  " + products.get(productNumber - 1).getMfgr());
             System.out.println("\t\t\tProduct name: \t  " + products.get(productNumber - 1).getProd_name());
             System.out.println("\t\t\tProduct price: \t  $" + products.get(productNumber - 1).getUnit_list_price());
@@ -204,15 +228,17 @@ public class CustomerOrders {
             if(isInteger(userInput)){
                int unitsToOrder = Integer.parseInt(userInput);
                int availableUnits = products.get(productNumber - 1).getUnits_in_stock();
+               cls();
                if(unitsToOrder > 0 && unitsToOrder <= availableUnits){
                   // Display order details
                   orderDetails.add(String.valueOf(unitsToOrder));
                   orderDetails.add(String.valueOf(products.get(productNumber - 1).getUnit_list_price()));
+
                   displayOrderDetails(orderDetails);
                   validUserInput = true;
                }
                else{
-                  cls();
+                  //cls();
                   System.out.println(unitsToOrder + " units exceeds the number of available units");
                   System.out.println("Please, enter a number of units less than or equal to " + availableUnits);
                }
@@ -286,9 +312,6 @@ public class CustomerOrders {
                if(customerNumber > 0 && customerNumber < customers.size() + 1){
                   orderDetails.add(String.valueOf(customers.get(customerNumber - 1).getCustomer_id()));
 
-//                  System.out.println("Customer selected: " + customerNumber + ". " +
-//                          customers.get(customerNumber - 1).getFirst_name() + " " +
-//                          customers.get(customerNumber - 1).getLast_name());
                   isValidCustomerNumb = true;
                }
                else{
@@ -387,7 +410,7 @@ public class CustomerOrders {
    }// End of the getStyle method
 
    public void cls(){
-      for(int i = 0; i < 20; i ++){
+      for(int i = 0; i < 25; i ++){
          System.out.println();
       }
    }

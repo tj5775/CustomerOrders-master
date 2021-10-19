@@ -30,6 +30,14 @@ import javax.persistence.NamedNativeQuery;
                 "FROM   PRODUCTS ",
         resultClass = Products.class
 )
+@NamedNativeQuery(
+        name="UpdateQuantity",
+        query = "UPDATE units_in_stock" +
+                "FROM   PRODUCTS " +
+                "SET ?" +
+                "WHERE UPC = ?",
+        resultClass = Products.class
+)
 /** Something that we stock, that the customer can order. */
 public class Products {
     @Id
